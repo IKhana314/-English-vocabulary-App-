@@ -1,0 +1,247 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 600px;
+}
+
+/* ヘッダー */
+.main-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.main-header h1 {
+    font-size: 28px;
+    color: #2c3e50;
+}
+.subtitle {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+/* カードステージ */
+.card-stage {
+    position: relative;
+}
+
+.step-card {
+    display: none;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 30px 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.step-card.active {
+    display: block;
+}
+
+.card-title {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #2c3e50;
+}
+
+/* 分岐ボタン群 */
+.branch-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.branch-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.branch-btn:hover {
+    border-color: #3498db;
+    background: #f8fafc;
+    transform: translateY(-2px);
+}
+
+.branch-btn.primary {
+    background: #3498db;
+    border-color: #3498db;
+    color: white;
+}
+.branch-btn.primary:hover {
+    background: #2980b9;
+}
+
+.branch-btn.danger {
+    background: #fff5f5;
+    border-color: #feb2b2;
+    color: #c53030;
+}
+.branch-btn.danger:hover {
+    background: #fed7d7;
+}
+
+.btn-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+.btn-text, .btn-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+.btn-sub {
+    font-size: 13px;
+    color: #718096;
+    margin-top: 4px;
+}
+
+/* テスト画面スタイル */
+.progress-badge {
+    text-align: center;
+    font-size: 14px;
+    color: #3498db;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.question-text {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin: 30px 0;
+    color: #1a202c;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-group input, .form-row input, #search {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    outline: none;
+}
+.input-group input:focus, .form-row input:focus, #search:focus {
+    border-color: #3498db;
+}
+
+.action-btn {
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: #2ecc71;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.action-btn:hover {
+    background: #27ae60;
+}
+
+.result-score {
+    font-size: 36px;
+    font-weight: bold;
+    color: #3498db;
+    text-align: center;
+    margin: 30px 0;
+}
+
+.back-link {
+    background: none;
+    border: none;
+    color: #718096;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+.back-link:hover {
+    color: #1a202c;
+}
+
+/* 単語リスト・テーブル */
+.add-box, .list-box {
+    margin-top: 20px;
+    border-top: 1px solid #edf2f7;
+    padding-top: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.styled-list {
+    list-style: none;
+    margin-top: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.styled-list li {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
+
+.table-container {
+    margin-top: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.data-table th, .data-table td {
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: 14px;
+}
+
+.stats-summary {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.stat-item {
+    flex: 1;
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+.stat-item .label { display: block; font-size: 12px; color: #718096; }
+.stat-item .value { font-size: 24px; font-weight: bold; color: #2d3748; }

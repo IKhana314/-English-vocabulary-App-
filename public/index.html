@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Forget-Me-Not</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ヘッダー（ミニマル化） -->
+        <header class="main-header">
+            <h1 onclick="showStep('main-menu')" style="cursor: pointer;">Forget-Me-Not</h1>
+            <p class="subtitle">覚えたつもりをなくす単語学習</p>
+        </header>
+
+        <!-- メイン表示領域 (カード形式) -->
+        <main class="card-stage">
+
+            <!-- ── STEP 1: メインメニュー（最初の分岐） ── -->
+<div id="step-main-menu" class="step-card active">
+                <h2 class="card-title">何をしますか？</h2>
+                <div class="branch-grid">
+                    <button class="branch-btn primary" onclick="startFlashcards()">
+                        <span class="btn-icon">🎴</span>
+                        <span class="btn-text">自己評価フラッシュカード</span>
+                    </button>
+
+                    <button class="branch-btn danger" onclick="openWeakCardBox()">
+                        <span class="btn-icon">📦</span>
+                        <span class="btn-text">苦手カードボックス</span>
+                    </button>
+
+                    <!-- 【変更】「小テスト」から「テスト」への分岐に変更 -->
+                    <button class="branch-btn" onclick="showStep('test-select')">
+                        <span class="btn-icon">📝</span>
+                        <span class="btn-text">テスト</span>
+                    </button>
+
+                    <button class="branch-btn" onclick="showStep('word-manage')">
+                        <span class="btn-icon">📚</span>
+                        <span class="btn-text">単語の確認・追加</span>
+                    </button>
+                    <button class="branch-btn admin" onclick="showStep('admin-dash')">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">管理者用ダッシュボード</span>
+                    </button>
+                </div>
+            </div>
+ 
+        <!-- ── STEP 2-A: 小テスト モード選択 ── -->
+            <div id="step-quiz-mode-select" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <h2 class="card-title">テストモードを選択</h2>
+                <div class="branch-grid">
+                    <button class="branch-btn" onclick="startTest('normal')">
+                        <span class="btn-title">通常テスト</span>
+                        <span class="btn-sub">全単語からランダム5問</span>
+                    </button>
+                    <button class="branch-btn danger" onclick="startTest('weak')">
+                        <span class="btn-title">🔥 弱点克服テスト</span>
+                        <span class="btn-sub">過去に間違えた単語のみ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── STEP 2-B: 小テスト 問題画面 ── -->
+            <div id="step-quiz-play" class="step-card">
+                <div class="progress-badge" id="quiz-progress">問題 1 / 5</div>
+                <div class="question-text" id="quiz-question">Q. apple</div>
+                
+                <div class="input-group">
+                    <input type="text" id="quiz-answer" placeholder="日本語の意味を入力..." autocomplete="off">
+                    <button class="action-btn" onclick="submitTestAnswer()">回答する</button>
+                </div>
+            </div>
+
+            <!-- ── STEP 2-C: 小テスト 結果画面 ── -->
+            <div id="step-quiz-result" class="step-card">
+                <h2 class="card-title">テスト完了！</h2>
+                <div class="result-score" id="quiz-final-score">5問中 4問正解</div>
+                
+                <div class="branch-grid">
+                    <button class="branch-btn primary" onclick="showStep('quiz-mode-select')">もう一度テスト</button>
+                    <button class="branch-btn" onclick="showStep('main-menu')">メニューに戻る</button>
+                </div>
+            </div>
+
+            <!-- ── STEP 3: 単語管理（確認・追加） ── -->
+            <div id="step-word-manage" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <h2 class="card-title">単語の登録・管理</h2>
+                
+                <!-- 新規登録フォーム -->
+                <div class="add-box">
+                    <h3>新規登録</h3>
+                    <div class="form-row">
+                        <input type="text" id="english" placeholder="英単語 (例: abandon)">
+                        <input type="text" id="japanese" placeholder="日本語 (例: 放棄する)">
+                        <button class="action-btn" onclick="addWord()">追加</button>
+                    </div>
+                    <p id="add-message" class="msg-success"></p>
+                </div>
+
+                <!-- 登録済み一覧 -->
+                <div class="list-box">
+                    <h3>登録済み単語 (<span id="word-count">0</span>)</h3>
+                    <input type="text" id="search" placeholder="検索..." oninput="filterWords()">
+                    <ul id="word-list" class="styled-list"></ul>
+                </div>
+            </div>
+<!-- ── STEP 5: 自己評価フラッシュカード画面 ── -->
+            <div id="step-flashcard" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <div class="progress-badge" id="fc-progress">カード 1 / 5</div>
+
+                <!-- カード本体 -->
+                <div class="flashcard-box" style="background: #f8fafc; border: 2px dashed #cbd5e0; border-radius: 12px; padding: 40px 20px; text-align: center; margin: 20px 0;">
+                    <p style="font-size: 14px; color: #718096; margin-bottom: 8px;">英語</p>
+                    <div id="fc-word-english" style="font-size: 36px; font-weight: bold; color: #1a202c; margin-bottom: 20px;">apple</div>
+                    
+                    <!-- 答え（初期は非表示） -->
+                    <div id="fc-answer-area" style="display: none; border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
+                        <p style="font-size: 14px; color: #718096; margin-bottom: 8px;">意味</p>
+                        <div id="fc-word-japanese" style="font-size: 28px; font-weight: bold; color: #27ae60;">りんご</div>
+                    </div>
+                </div>
+
+                <!-- アクションボタン群 -->
+                <div id="fc-action-reveal">
+                    <button class="action-btn" onclick="revealFlashcardAnswer()" style="width: 100%;">答えを見る</button>
+                </div>
+
+                <div id="fc-action-assess" style="display: none;">
+                    <p style="text-align: center; font-weight: bold; margin-bottom: 12px; color: #4a5568;">今の記憶状態は？</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="branch-btn" onclick="submitFlashcardAssessment('覚えていた')" style="flex: 1; background: #e6fffa; border-color: #319795; color: #234e52;">🟢 覚えていた</button>
+                        <button class="branch-btn" onclick="submitFlashcardAssessment('あやふや')" style="flex: 1; background: #fefcbf; border-color: #d69e2e; color: #744210;">🟡 あやふや</button>
+                        <button class="branch-btn" onclick="submitFlashcardAssessment('忘れていた')" style="flex: 1; background: #fff5f5; border-color: #e53e3e; color: #9b2c2c;">🔴 忘れていた</button>
+                    </div>
+                </div>
+            </div>
+<!-- ── テストの選択画面 ── -->
+            <div id="step-test-select" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <h2 class="card-title">テストメニュー</h2>
+                <div class="branch-grid">
+                    <button class="branch-btn" onclick="showStep('quiz-mode-select')">
+                        <span class="btn-title">アプリ内 小テスト</span>
+                        <span class="btn-sub">通常テスト または 弱点克服テスト</span>
+                    </button>
+                    <button class="branch-btn primary" onclick="openSchoolTestScreen()">
+                        <span class="btn-title">🏫 学校の小テスト結果を記録</span>
+                        <span class="btn-sub">実際のテストの点数を入力・データ化</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── 学校の小テスト結果記録画面 ── -->
+            <div id="step-school-test-form" class="step-card">
+                <button class="back-link" onclick="showStep('test-select')">← テストメニューに戻る</button>
+                <h2 class="card-title">🏫 学校の小テスト結果の記録</h2>
+                
+                <div class="input-group" style="gap: 16px; margin-bottom: 20px;">
+                    <div>
+                        <label style="font-size: 14px; color: #4a5568; display: block; margin-bottom: 6px;">得点（何点だった？）</label>
+                        <input type="number" id="school-score" placeholder="例: 90">
+                    </div>
+                    <div>
+                        <label style="font-size: 14px; color: #4a5568; display: block; margin-bottom: 6px;">満点（何点満点？）</label>
+                        <input type="number" id="school-max-score" placeholder="例: 100" value="100">
+                    </div>
+                    <div>
+                        <label style="font-size: 14px; color: #4a5568; display: block; margin-bottom: 6px;">メモ（範囲や感想など）</label>
+                        <input type="text" id="school-memo" placeholder="例: Unit 1 の単語テスト">
+                    </div>
+                    <button class="action-btn" onclick="saveSchoolTestRecord()">結果を記録する</button>
+                </div>
+
+                <h3 style="font-size: 16px; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 20px;">記録された学校テスト履歴</h3>
+                <ul id="school-test-history-list" class="styled-list">
+                    <li>読み込み中...</li>
+                </ul>
+            </div>
+<!-- ── STEP 6: 苦手カードボックス画面 ── -->
+            <div id="step-weak-box" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <h2 class="card-title">📦 苦手カードボックス</h2>
+                <p style="text-align: center; font-size: 14px; color: #718096; margin-bottom: 20px;">
+                    あやふや・忘れていた・間違えた単語が集約されています
+                </p>
+
+                <!-- 苦手単語一覧リスト -->
+                <div class="list-box" style="margin-top: 0; border-top: none;">
+                    <ul id="weak-box-list" class="styled-list">
+                        <li>読み込み中...</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- ── STEP 4: 管理者ダッシュボード ── -->
+            <div id="step-admin-dash" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <h2 class="card-title">管理者統計</h2>
+
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="label">総テスト回数</span>
+                        <span class="value" id="stat-total-tests">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">平均正答率</span>
+                        <span class="value" id="stat-avg-score">0%</span>
+                    </div>
+                </div>
+
+                <h3>みんなの苦手な単語 TOP3</h3>
+                <ul id="stat-wrong-list" class="styled-list"></ul>
+
+                <h3>単語ごとの詳細正答率</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>単語</th>
+                                <th>正解</th>
+                                <th>不正解</th>
+                                <th>正答率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-word-stats-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+<!-- ── STEP 4: 管理者ダッシュボード ── -->
+            <div id="step-admin-dash" class="step-card">
+                <button class="back-link" onclick="showStep('main-menu')">← メニューに戻る</button>
+                <h2 class="card-title">管理者統計</h2>
+
+                <!-- 【新規】研究用データ出力ボタン -->
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button class="branch-btn primary" onclick="downloadResearchCSV()" style="padding: 12px; font-size: 15px;">
+                        📥 研究発表用データ（CSV）をダウンロード
+                    </button>
+                </div>
+
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="label">総テスト回数</span>
+                        <span class="value" id="stat-total-tests">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">平均正答率</span>
+                        <span class="value" id="stat-avg-score">0%</span>
+                    </div>
+                </div>
+                <!-- 以下省略 -->
+
+    <script src="script.js"></script>
+</body>
+</html>
